@@ -1,5 +1,4 @@
 import pygame
-
 import random
 
 from pygame.locals import (
@@ -42,6 +41,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
@@ -49,8 +49,8 @@ class Enemy(pygame.sprite.Sprite):
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect(
             center=(
-                random.randint(SCREEN_WIDTH + 20, SCREEN_HEIGHT + 100),
-                random.randint(0, SCREEN_HEIGHT)
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
             )
         )
         self.speed = random.randint(1, 5)
@@ -65,7 +65,14 @@ pygame.init()
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+ADDENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDENEMY, 250)
+
 player = Player()
+
+enemies = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+all_sprites.add(player)
 
 running = True
 
@@ -78,12 +85,19 @@ while running:
         elif event.type == QUIT:
             running = False
 
-    pressed_keys = pygame.key.get_pressed()
+        elif event.type == ADDENEMY:
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            all_sprites.add(new_enemy)
 
+    pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
+
+    enemies.update()
 
     screen.fill((0, 0, 0))
 
-    screen.blit(player.surf, player.rect)
+    for entity in all_sprites:
+        screen.blit(entity.surf, entity.rect)
 
     pygame.display.flip()
