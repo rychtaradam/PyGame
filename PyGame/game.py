@@ -116,6 +116,8 @@ move_down_sound.set_volume(0.6)
 collision_sound.set_volume(1.0)
 
 running = True
+start_time = None
+start_time = pygame.time.get_ticks()
 
 while running:
     for event in pygame.event.get():
@@ -143,6 +145,10 @@ while running:
     clouds.update()
 
     screen.fill((135, 206, 250))
+    if start_time:
+        time_since_enter = pygame.time.get_ticks() - start_time
+        message = 'Score: ' + str(time_since_enter)
+        screen.blit(pygame.font.SysFont("Sans", 20).render(message, True, (255, 255, 255)), (20, 20))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
