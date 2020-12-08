@@ -65,10 +65,10 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
 
 
-class Cloud(pygame.sprite.Sprite):
+class Mars(pygame.sprite.Sprite):
     def __init__(self):
-        super(Cloud, self).__init__()
-        self.surf = pygame.image.load("images/cloud.png").convert()
+        super(Mars, self).__init__()
+        self.surf = pygame.image.load("images/mars.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
@@ -111,15 +111,16 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
-ADDCLOUD = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDCLOUD, 10000)
+ADDMARS = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDMARS, 10000)
 ADDHVEZDA = pygame.USEREVENT + 3
 pygame.time.set_timer(ADDHVEZDA, 100)
 
 player = Player()
 
 enemies = pygame.sprite.Group()
-clouds = pygame.sprite.Group()
+marses = pygame.sprite.Group()
+hvezdy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
@@ -153,21 +154,22 @@ while running:
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
-        elif event.type == ADDCLOUD:
-            new_cloud = Cloud()
-            clouds.add(new_cloud)
-            all_sprites.add(new_cloud)
+        elif event.type == ADDMARS:
+            new_mars = Mars()
+            marses.add(new_mars)
+            all_sprites.add(new_mars)
 
         elif event.type == ADDHVEZDA:
             new_hvezda = Hvezda()
-            clouds.add(new_hvezda)
+            hvezdy.add(new_hvezda)
             all_sprites.add(new_hvezda)
 
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
 
     enemies.update()
-    clouds.update()
+    marses.update()
+    hvezdy.update()
 
     screen.fill((0, 0, 0))
     if start_time:
