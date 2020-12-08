@@ -112,7 +112,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
 ADDCLOUD = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDCLOUD, 1000)
+pygame.time.set_timer(ADDCLOUD, 10000)
 ADDHVEZDA = pygame.USEREVENT + 3
 pygame.time.set_timer(ADDHVEZDA, 100)
 
