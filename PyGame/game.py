@@ -20,7 +20,7 @@ SCREEN_HEIGHT = 600
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load("images/jet.png").convert()
+        self.surf = pygame.image.load("images/raketa.png").convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
 
@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.image.load("images/missile.png").convert()
+        self.surf = pygame.image.load("images/meteor.png").convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
@@ -57,7 +57,7 @@ class Enemy(pygame.sprite.Sprite):
                 random.randint(0, SCREEN_HEIGHT)
             )
         )
-        self.speed = random.randint(1, 3)
+        self.speed = random.randint(2, 3)
 
     def update(self):
         self.rect.move_ip(-self.speed, 0)
@@ -65,9 +65,9 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
 
 
-class Planets(pygame.sprite.Sprite):
+class Mars(pygame.sprite.Sprite):
     def __init__(self):
-        super(Planets, self).__init__()
+        super(Mars, self).__init__()
         self.surf = pygame.image.load("images/mars.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
@@ -78,15 +78,15 @@ class Planets(pygame.sprite.Sprite):
         )
 
     def update(self):
-        self.rect.move_ip(-5, 0)
+        self.rect.move_ip(-1, 0)
         if self.rect.right < 0:
             self.kill()
 
 
-class Star(pygame.sprite.Sprite):
+class Hvezda(pygame.sprite.Sprite):
     def __init__(self):
-        super(Star, self).__init__()
-        self.surf = pygame.image.load("images/star.png").convert()
+        super(Hvezda, self).__init__()
+        self.surf = pygame.image.load("images/hvezda.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
@@ -96,7 +96,7 @@ class Star(pygame.sprite.Sprite):
         )
 
     def update(self):
-        self.rect.move_ip(-5, 0)
+        self.rect.move_ip(-1, 0)
         if self.rect.right < 0:
             self.kill()
 
@@ -111,15 +111,16 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
-ADDPLANETS = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDPLANETS, 1000)
-ADDSTAR = pygame.USEREVENT + 3
-pygame.time.set_timer(ADDSTAR, 1000)
+ADDMARS = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDMARS, 10000)
+ADDHVEZDA = pygame.USEREVENT + 3
+pygame.time.set_timer(ADDHVEZDA, 100)
 
 player = Player()
 
 enemies = pygame.sprite.Group()
-clouds = pygame.sprite.Group()
+marses = pygame.sprite.Group()
+hvezdy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
@@ -136,6 +137,8 @@ move_down_sound.set_volume(0.6)
 collision_sound.set_volume(1.0)
 
 running = True
+start_time = None
+start_time = pygame.time.get_ticks()
 
 while running:
     for event in pygame.event.get():
@@ -151,23 +154,28 @@ while running:
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
-        elif event.type == ADDPLANETS:
-            new_planet = Planets()
-            clouds.add(new_planet)
-            all_sprites.add(new_planet)
+        elif event.type == ADDMARS:
+            new_mars = Mars()
+            marses.add(new_mars)
+            all_sprites.add(new_mars)
 
-        elif event.type == ADDSTAR:
-            new_star = Star()
-            clouds.add(new_star)
-            all_sprites.add(new_star)
+        elif event.type == ADDHVEZDA:
+            new_hvezda = Hvezda()
+            hvezdy.add(new_hvezda)
+            all_sprites.add(new_hvezda)
 
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
 
     enemies.update()
-    clouds.update()
+    marses.update()
+    hvezdy.update()
 
     screen.fill((0, 0, 0))
+    if start_time:
+        time_since_enter = pygame.time.get_ticks() - start_time
+        message = 'Score: ' + str(time_since_enter)
+        screen.blit(pygame.font.SysFont("Sans", 20).render(message, True, (255, 255, 255)), (20, 20))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
