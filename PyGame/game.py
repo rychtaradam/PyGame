@@ -65,10 +65,10 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
 
 
-class Cloud(pygame.sprite.Sprite):
+class Planets(pygame.sprite.Sprite):
     def __init__(self):
-        super(Cloud, self).__init__()
-        self.surf = pygame.image.load("images/cloud.png").convert()
+        super(Planets, self).__init__()
+        self.surf = pygame.image.load("images/mars.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
@@ -78,7 +78,25 @@ class Cloud(pygame.sprite.Sprite):
         )
 
     def update(self):
-        self.rect.move_ip(-1, 0)
+        self.rect.move_ip(-5, 0)
+        if self.rect.right < 0:
+            self.kill()
+
+
+class Star(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Star, self).__init__()
+        self.surf = pygame.image.load("images/star.png").convert()
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT)
+            )
+        )
+
+    def update(self):
+        self.rect.move_ip(-5, 0)
         if self.rect.right < 0:
             self.kill()
 
@@ -93,8 +111,10 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
-ADDCLOUD = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDCLOUD, 1000)
+ADDPLANETS = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDPLANETS, 1000)
+ADDSTAR = pygame.USEREVENT + 3
+pygame.time.set_timer(ADDSTAR, 1000)
 
 player = Player()
 
@@ -131,10 +151,15 @@ while running:
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
-        elif event.type == ADDCLOUD:
-            new_cloud = Cloud()
-            clouds.add(new_cloud)
-            all_sprites.add(new_cloud)
+        elif event.type == ADDPLANETS:
+            new_planet = Planets()
+            clouds.add(new_planet)
+            all_sprites.add(new_planet)
+
+        elif event.type == ADDSTAR:
+            new_star = Star()
+            clouds.add(new_star)
+            all_sprites.add(new_star)
 
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
@@ -142,7 +167,7 @@ while running:
     enemies.update()
     clouds.update()
 
-    screen.fill((135, 206, 250))
+    screen.fill((0, 0, 0))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
